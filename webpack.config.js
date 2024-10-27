@@ -3,8 +3,10 @@ const path = require('path');
 module.exports = {
   entry: './src/script.js',
   output: {
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
+    chunkFilename: '[name].chunk.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/dist/'
   },
   mode: 'development',
   module: {

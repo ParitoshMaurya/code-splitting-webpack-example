@@ -1,10 +1,4 @@
-import React from 'react';
 import { getRandomColor } from './utils/colorUtils';
-import Header from './components/Header';
-import HeroBanner from './components/HeroBanner';
-import AskHelp from './components/AskHelp';
-import Footer from './components/Footer';
-import Timer from './components/Timer';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Add basic styling to body
@@ -13,20 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.style.padding = '0';
 
     // Find all elements with data-component attribute and render appropriate components
-    const componentMap = {
-        'header': Header,
-        'hero-banner': HeroBanner,
-        'ask-help': AskHelp,
-        'footer': Footer,
-        'timer': Timer
-    };
-
     document.querySelectorAll('[data-component]').forEach(el => {
         const componentName = el.getAttribute('data-component');
-        const Component = componentMap[componentName];
-        if (Component) {
-            new Component(el);
-        }
+        import(/* webpackChunkName: "[request]" */ `./components/${componentName}`)
+            .then(module => {
+                const Component = module.default;
+                new Component(el);
+            })
+            .catch(error => console.error(`Error loading component ${componentName}:`, error));
     });
 
     // Keep the existing functionality
