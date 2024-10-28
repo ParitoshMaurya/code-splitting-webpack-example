@@ -1,4 +1,10 @@
 import { getRandomColor } from './utils/colorUtils';
+import Header from './components/Header';
+import HeroBanner from './components/HeroBanner';
+import AskHelp from './components/AskHelp';
+
+// List of components to be chunked
+const chunkedComponents = ["Timer", "Footer"];
 
 document.addEventListener('DOMContentLoaded', function() {
     // Add basic styling to body
@@ -9,12 +15,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // Find all elements with data-component attribute and render appropriate components
     document.querySelectorAll('[data-component]').forEach(el => {
         const componentName = el.getAttribute('data-component');
-        import(/* webpackChunkName: "[request]" */ `./components/${componentName}`)
-            .then(module => {
-                const Component = module.default;
-                new Component(el);
-            })
-            .catch(error => console.error(`Error loading component ${componentName}:`, error));
+        if (chunkedComponents.includes(componentName)) {
+            // Dynamically import chunked components
+            import(/* webpackChunkName: "[request]" */ `./components/${componentName}`)
+                .then(module => {
+                    const Component = module.default;
+                    new Component(el);
+                })
+                .catch(error => console.error(`Error loading component ${componentName}:`, error));
+        } else {
+            // Render non-chunked components
+            let Component;
+            switch(componentName) {
+                case 'Header':
+                    Component = Header;
+                    break;
+                case 'HeroBanner':
+                    Component = HeroBanner;
+                    break;
+                case 'AskHelp':
+                    Component = AskHelp;
+                    break;
+            
+                default:
+                    console.error(`Unknown component: ${componentName}`);
+                    return;
+            }
+            new Component(el);
+        }
     });
 
     // Keep the existing functionality
